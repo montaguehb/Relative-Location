@@ -3,6 +3,7 @@ import numpy
 class Room():
     all = []
     directions = {
+        #rotate player's heading 360, 180, 270, or 90 degrees respectively 
     "forward": numpy.array([[1, 0],
                             [0, 1]]),
     "back": numpy.array([[-1, 0],
@@ -20,7 +21,7 @@ class Room():
                       (-1, 0): negative_x,
                       (0, -1): negative_y
                       }
-        self.direction_list = [key for key, value in Room.directions.items() if value.any()]
+        
         Room.all.append(self)
 
     @classmethod
@@ -30,11 +31,11 @@ class Room():
 class Player():
     def __init__(self, room):
         self.current_room = room
-        self.forward = numpy.array([1, 0])
+        self.heading = numpy.array([1, 0])
 
     def move(self, rot_matrix):
-        self.forward = numpy.matmul(self.forward, rot_matrix)
-        self.current_room = Room.find_by_num(self.current_room.rooms.get(tuple(self.forward)))
+        self.heading = numpy.matmul(self.heading, rot_matrix)
+        self.current_room = Room.find_by_num(self.current_room.rooms.get(tuple(self.heading)))
 
 # Could be done more efficiently using iteration, only need to technically set half the values and can find the other half using inferences.
 # e.g. the postitive y for the room at negative_y for 0 is 0               
@@ -51,6 +52,7 @@ Room(8, y=7, negative_x=3)
 new_player = Player(room=Room.find_by_num(0))
 
 moving = True
+direction_list = [key for key, value in Room.directions.items()]
 while moving:
     print(f"The current room num is {new_player.current_room.num}")
     user_input = input("input a direction:")
